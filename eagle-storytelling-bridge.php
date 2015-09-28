@@ -1,7 +1,7 @@
 <?php
 /**
  * @package eagle-storytelling-bridge
- * @version 0.9
+ * @version 1.0
  */
 /*
 Plugin Name: Eagle Storytelling Application Bridge
@@ -13,8 +13,13 @@ Version:     1.0
 
 */
 
+/**
+ * Settings
+ */
 // show debug info
 define('ESA_DEBUG', false);
+
+
 
 /**
  * User Specific Settings
@@ -57,9 +62,9 @@ add_action('admin_init', function () {
 		$role->add_cap('edit_others_story');
 		$role->add_cap('read_private_posts');
 	}
-		
-
-
+	
+	global $esa_settings;
+	
 });
 
 
@@ -139,6 +144,12 @@ add_action('init', function() {
 					'assign_terms' => 'assign_story_keyword'
 			)
 	));
+	
+	// override es settings
+	global $esa_settings;
+	$esa_settings = array_merge($esa_settings, array('post_types' => array('story')));
+	
+	
 }, 0);
 
 
@@ -150,20 +161,18 @@ add_action('init', function() {
 function esa_get_story_post_type_template($single_template) {
 	global $post;
 
-	if ($post->post_type == 'story') {
+	if (is_esa($post->post_type)) {
 		$single_template = dirname( __FILE__ ) . '/template/single-story.php';
 	}
 	return $single_template;
 }
 
-add_filter( 'single_template', 'esa_get_story_post_type_template' );
+add_filter('single_template', 'esa_get_story_post_type_template');
 
 
 /* register template for page "stories" */
-function esa_get_stories_page_template( $page_template )
-{
-
-	if ( is_page( 'stories' ) ) {
+function esa_get_stories_page_template($page_template) {
+	if (is_page('stories')) {
 		$page_template = dirname( __FILE__ ) . '/template/page-stories.php';
 	}
 	return $page_template;
@@ -174,7 +183,7 @@ add_filter( 'page_template', 'esa_get_stories_page_template' );
 
 /* register template for page "search stories" */
 function esa_get_search_stories_page_template($page_template) {
-	if ((get_query_var('post_type') == "story") or (get_query_var('taxonomy') == 'story_keyword')){
+	if (is_esa(get_query_var('post_type')) or (get_query_var('taxonomy') == 'story_keyword')){
 		$page_template = dirname( __FILE__ ) . '/template/search-stories.php';
 	}
 	return $page_template;
@@ -189,7 +198,7 @@ add_filter('404_template', 'esa_get_search_stories_page_template');
  * search filter
  */ 
 function searchfilter($query) {
-	if ($query->is_search && $query->post_type == "story") {
+	if ($query->is_search && is_esa($query->post_type)) {
 		$query->set('meta_key','_wp_page_template');
 		$query->set('meta_value', dirname( __FILE__ ) . '/template/search-stories.php');
 	}
@@ -203,10 +212,10 @@ function searchfilter($query) {
 /**
  * Register style sheets and javascript
  */
-add_action( 'wp_enqueue_scripts', function() {
+add_action('wp_enqueue_scripts', function() {
 	global $post;
-	global $is_esa_story_page;
-	if ((get_post_type() == 'story') or ($is_esa_story_page)) {
+	
+	if (is_esa(get_post_type())) {
 
 		// css
 		wp_register_style('eagle-storytelling', plugins_url('eagle-storytelling-bridge/css/eagle-storytelling.css'));
