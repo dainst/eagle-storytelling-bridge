@@ -19,7 +19,7 @@ Version:     1.0
 // show debug info
 define('ESA_DEBUG', false);
 
-
+require_once('template/functions.php');
 
 /**
  * User Specific Settings
