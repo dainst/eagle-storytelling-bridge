@@ -57,9 +57,6 @@
 			    );
 			    $latest_stories_loop = new WP_Query( $args );
 			    
-			    echo "<textarea>";
-			    print_r($latest_stories_loop);
-			    echo "</textarea>";
 			    
 			    while ( $latest_stories_loop->have_posts() ) : $latest_stories_loop->the_post(); 
 			?>
