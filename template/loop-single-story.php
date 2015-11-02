@@ -4,23 +4,27 @@
 	
 	<article id="post-<?php the_ID(); ?>" <?php post_class('entry clearfix'); ?>>
 
-	
 		<?php $thumbnail_url = esa_thumpnail(get_post());  ?>
 
 		<h1 class="page_title"><?php the_title(); ?></h1>
 	
-		<?php if($thumbnail_url) { ?><div><?php } ?>
-			<div class="meta-info">
-				<?php 
-					echo "Posted by <a href='"; bloginfo('url'); echo "?s=&post_type=story&author="; the_author_meta('ID'); echo "'>"; the_author(); echo "</a>";
-					echo " on "; the_time(et_get_option('flexible_date_format'));
-					echo '<br>' . esa_get_story_keywords();
-				?>	
-			</div>
-		<?php if($thumbnail_url) { ?></div><?php } ?>
 		
-
-		<p class="sharelink"><a class="addthis_button_compact"><span>Share &raquo;</span></a></p>
+		
+		<div class="sharelink">
+			<a class="addthis_button_compact"><span>Share</span></a>
+			<?php if(current_user_can( 'edit_others_posts', get_ ) || ($post->post_author == $current_user->ID))  { ?>
+				<br><?php edit_post_link('Edit'); ?>	<br>
+			<?php }?>
+		</div>
+		
+		<div class="et_pt_blogmeta <?php echo (!$thumbnail_url)  ? 'esa_nothumpnail' : '' ?>">
+			<?php 
+				echo "Posted by <a href='"; bloginfo('url'); echo "?s=&post_type=story&author="; the_author_meta('ID'); echo "'>"; the_author(); echo "</a>";
+				echo " on "; the_time(et_get_option('flexible_date_format'));
+				echo '<br>' . esa_get_story_keywords();
+			?>	
+		</div>
+		
 
 		<?php if (has_excerpt()) { ?>
 			<div class="post-excerpt">

@@ -56,6 +56,11 @@
 			        'showposts' => 10
 			    );
 			    $latest_stories_loop = new WP_Query( $args );
+			    
+			    echo "<textarea>";
+			    print_r($latest_stories_loop);
+			    echo "</textarea>";
+			    
 			    while ( $latest_stories_loop->have_posts() ) : $latest_stories_loop->the_post(); 
 			?>
 						<li>
@@ -72,7 +77,7 @@
 		<?php if (is_user_logged_in()) { ?>
 			<h4 class='widgettitle'><?php echo 'Logged in as '.wp_get_current_user()->user_login ?></h4>
 			<p>
-				<?php if(current_user_can( 'edit_others_posts', get_ ) || ($post->post_author == $current_user->ID))  { ?>
+				<?php if(is_single() and (current_user_can( 'edit_others_posts', get_ ) || ($post->post_author == $current_user->ID)))  { ?>
 					<?php edit_post_link('Edit this story'); ?>	<br>
 				<?php }?>
 				<a href="<?php echo site_url(); ?>/wp-admin/post-new.php?post_type=story">Create new story</a><br>

@@ -45,14 +45,23 @@ input[type="week"]
 /* extends original style css l. 138 */ 
 .story > .meta-info { padding-left: 36px; }
 
+/* extends original style css l. 155 */ 
+.title a, .page_title, #reply-title {
+	margin-right: 36px;
+}
+
 /* esa specific styles */
-.story-thumbnail {
+.story-thumpnail {
 	float: left;
 	margin-right: 1em;
 }
 
-.story-thumbnail-list {
+.story-thumpnail-list {
 	margin-left: -36px;
+}
+
+.esa_nothumpnail {
+	margin-left: 36px;
 }
 
 .post-excerpt {
@@ -104,4 +113,10 @@ input[type="week"]
 
 #esa_searchform .widgettitle {
 	padding-bottom: 3px
+}
+
+.sharelink {
+	text-align: right;
+	line-height: 20px;
+	
 }
