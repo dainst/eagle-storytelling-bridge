@@ -48,21 +48,22 @@
 	
 	
 	<div id="recent-stories" class="widget widget_recent_entries">
-		<h4 class="widgettitle">Latest Stories</h4>
+		<h4 class="widgettitle">Featured Stories</h4>
 		<ul>
 			<?php
 			    $args = array(
 			        'post_type' => 'story',
-			        'showposts' => 10
+			        'showposts' => 10,
+			    	'meta_key'	=> 'esa_featured',
+			    	'meta_value'=>	1
 			    );
-			    $latest_stories_loop = new WP_Query( $args );
-			    
-			    
-			    while ( $latest_stories_loop->have_posts() ) : $latest_stories_loop->the_post(); 
+			    $latest_stories_loop = new WP_Query($args);
+
+			    while ($latest_stories_loop->have_posts()) : $latest_stories_loop->the_post(); 
 			?>
-						<li>
-							<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a>
-						</li>
+			<li>
+				<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a>
+			</li>
 			<?php
 			    endwhile;
 			    wp_reset_postdata();
@@ -74,7 +75,7 @@
 		<?php if (is_user_logged_in()) { ?>
 			<h4 class='widgettitle'><?php echo 'Logged in as '.wp_get_current_user()->user_login ?></h4>
 			<p>
-				<?php if(is_single() and (current_user_can( 'edit_others_posts', get_ ) || ($post->post_author == $current_user->ID)))  { ?>
+				<?php if(is_single() and (current_user_can('edit_others_posts', get_) or ($post->post_author == $current_user->ID)))  { ?>
 					<?php edit_post_link('Edit this story'); ?>	<br>
 				<?php }?>
 				<a href="<?php echo site_url(); ?>/wp-admin/post-new.php?post_type=story">Create new story</a><br>

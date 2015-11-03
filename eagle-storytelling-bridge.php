@@ -226,4 +226,45 @@ add_action('wp_enqueue_scripts', function() {
 });
 
 
+/**
+ * fetaured posts 
+*/
+add_action('add_meta_boxes', function () {
 
+	add_meta_box(
+			'esa_featured',
+			'Featured Story',
+			function($post) {
+				wp_nonce_field('esa_featured_meta_box_nonce', 'esa_featured_meta_box_nonce');
+				$value = get_post_meta($post->ID, 'esa_featured', true);
+				
+				$checked = $value ? 'checked="checked"' : '';
+				echo '<input type="checkbox" id="esa_featured" name="esa_featured"' . $checked . '" size="25" />';
+				echo '<label for="esa_featured">Set this as a  featured story</label>';
+			},
+			'story'
+	);
+	
+});
+
+add_action('save_post', function($post_id) {
+	
+	// Verify that the nonce is valid.
+	if (!isset($_POST['esa_featured_meta_box_nonce']) ) {return;}
+	if (!wp_verify_nonce($_POST['esa_featured_meta_box_nonce'], 'esa_featured_meta_box_nonce')) {return;}
+	
+	// If this is an autosave, our form has not been submitted, so we don't want to do anything.
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {return;}
+	
+	// Check the user's permissions.
+	if (isset($_POST['post_type']) && 'story' == $_POST['post_type']) {
+		if (!current_user_can('edit_post', $post_id)) {
+			return;
+		}
+	}
+	
+	$esa_featured = isset($_POST['esa_featured']) and $_POST['esa_featured'] ? 1 : '';
+	
+	
+	update_post_meta($post_id, 'esa_featured', $esa_featured);
+});
