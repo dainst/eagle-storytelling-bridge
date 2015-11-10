@@ -1,12 +1,17 @@
 <?php if ( is_active_sidebar( 'sidebar' ) ){ ?>
 	<div id="sidebar">
+	
+	
+	
 
 	<div class="topsearch">
           <h3><a href='<?php bloginfo('url'); ?>/stories'>Stories</a></h3>
           <p><a href='<?php bloginfo('url'); ?>/stories'>Flagship Storytelling Application</a></p>
     </div>
     
-
+    <div class="widget">
+    	<?php wp_nav_menu( array( 'theme_location' => 'esa-menu' ) ); ?>
+	</div>
 
 	<div class="widget">
 	
@@ -35,13 +40,14 @@
         		<?php // <input type="text" name="author_name" value="<?php echo get_query_var('author_name') ? >" class="s" />?>
 				<?php // <input type="submit" class="searchsubmit" value="Search" /> ?>
     		</div>
-
+			<!--  
 			<h5>Filter by Europeana ID</h5>
     		<div>
         		<input type="hidden" name="esa_item_source" 	value="europeana" />
         		<input type="text" 	 name="esa_item_id" 	id="esa-filter-europeana"	value="<?php echo ($_GET['esa_item_source']  == 'europeana') ? $_GET['esa_item_id'] : '' ?>" class="s" />
         		<?php //<input type="submit" class="searchsubmit" value="Search" / ?>
     		</div>
+    		-->
 		</form>
 	</div>
 	
@@ -85,7 +91,7 @@
 		<?php } else { ?>
 			<h4 class='widgettitle'>Not logged in</h4>
 			<p>
-				<a href="<?php echo wp_login_url(site_url('/stories/')); ?>" title="Login">Log in</a> to create a story.
+				<a href="<?php echo wp_login_url(site_url('/stories/')); ?>" title="Login">Log in (or create an account)</a> to create a story.
 			</p>
 		<?php }	?>
 	</div>

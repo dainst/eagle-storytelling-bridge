@@ -147,7 +147,11 @@ add_action('init', function() {
 	
 	// override es settings
 	global $esa_settings;
-	$esa_settings = array_merge($esa_settings, array('post_types' => array('story')));
+	$esa_settings = array_merge($esa_settings, array(
+			'post_types' => array('story'),
+			'add_media_entry' => 'Insert Epigraphic Datasource'
+		)
+	);
 	
 	
 }, 0);
@@ -267,4 +271,11 @@ add_action('save_post', function($post_id) {
 	
 	
 	update_post_meta($post_id, 'esa_featured', $esa_featured);
+});
+
+
+
+// menu
+add_action('init', function() {
+	register_nav_menu('esa-menu',__( 'Stories Menu' ));
 });
