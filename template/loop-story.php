@@ -1,6 +1,6 @@
 <div class="et_pt_blogentry clearfix">
 	
-	<?php $thumbnail_url = esa_thumpnail(get_post());  ?>
+	<?php $thumbnail_url = esa_thumbnail(get_post());  ?>
 	
 	<a href="<?php the_permalink(); ?>" class="readmore"><span><?php esc_html_e('read Story','Flexible'); ?> &raquo;</span></a>
 	

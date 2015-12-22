@@ -4,7 +4,7 @@
 	
 	<article id="post-<?php the_ID(); ?>" <?php post_class('entry clearfix'); ?>>
 
-		<?php $thumbnail_url = esa_thumpnail(get_post());  ?>
+		<?php $thumbnail_url = esa_thumbnail(get_post());  ?>
 
 		<h1 class="page_title"><?php the_title(); ?></h1>
 	
