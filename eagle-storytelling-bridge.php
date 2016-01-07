@@ -145,7 +145,7 @@ add_action('init', function() {
 			)
 	));
 	
-	// override es settings
+	// override esa settings
 	global $esa_settings;
 	$esa_settings = array_merge($esa_settings, array(
 			'post_types' => array('story'),

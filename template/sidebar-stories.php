@@ -24,16 +24,16 @@
 				<input type="hidden" name="post_type" value="story" />
     		</div>
 
-
+			<!--  
 			<h4 class="widgettitle">Filters</h4>
 			<h5>Filter by keyword</h5>
     		<div>
-    			<?php esa_keyword_cloud(array('selected' =>  $_GET['term'])); ?>
+    			<?php //esa_keyword_cloud(array('selected' =>  $_GET['term'])); ?>
         		<?php // <input type="hidden" name="term" 	value="<?php echo (get_query_var('taxonomy') == 'story_keyword') ? get_query_var('term') : '' ? >" class="s" id='esa_keyword_filter' />?>
 				<?php // <input type="submit" class="searchsubmit" value="Search" /> ?>
         		<input type="hidden" name="taxonomy" value="story_keyword" />
     		</div>
-
+			-->
 			<h5>Filter by author</h5>
     		<div>
     			<?php esa_dropdown_users((int) $_GET['author']); ?>

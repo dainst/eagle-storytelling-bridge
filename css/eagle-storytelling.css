@@ -118,5 +118,8 @@ input[type="week"]
 .sharelink {
 	text-align: right;
 	line-height: 20px;
-	
+}
+
+#esa_items_overview_map {
+	height: 300px !important
 }

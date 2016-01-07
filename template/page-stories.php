@@ -16,7 +16,9 @@ $et_ptemplate_blog_perpage = 5;
 
 <div id="content-area" class="clearfix<?php if ( $fullwidth ) echo ' fullwidth'; ?>">
 	<div id="left-area">
-	    <h1 class="page_title">STORIES</h1>
+		<?php esa_item_map(); ?>
+	
+	    <!--  <h1 class="page_title">STORIES</h1> -->
 		<article id="post-<?php the_ID(); ?>" <?php post_class('entry clearfix'); ?>>
 			
 
@@ -36,7 +38,14 @@ $et_ptemplate_blog_perpage = 5;
 				</div> 	<!-- end .post-thumbnail -->
 			<?php } ?>
 			
+			
+			
 			<div class="post-content">
+			
+
+					
+
+			
 				<?php the_content(); ?>
 				
 				<div id="et_pt_blog" class="responsive">
@@ -69,6 +78,7 @@ $et_ptemplate_blog_perpage = 5;
 				
 				<?php wp_link_pages(array('before' => '<p><strong>'.esc_attr__('Pages','Flexible').':</strong> ', 'after' => '</p>', 'next_or_number' => 'number')); ?>
 				<?php edit_post_link(esc_attr__('Edit this page','Flexible')); ?>
+
 			</div> 	<!-- end .post-content -->
 		</article> <!-- end .entry -->
 	</div> <!-- end #left_area -->
