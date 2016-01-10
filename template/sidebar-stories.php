@@ -16,38 +16,25 @@
 	<div class="widget">
 	
 
-		<form role="search" method="get" class="searchform" id="esa_searchform" action="<?php echo site_url(); ?>/">
+		<form role="search" method="post" class="searchform" id="esa_searchform" action="<?php echo site_url(); ?>/">
 			<h4 class="widgettitle">Search Stories</h4>
-		
+			<?php //<textarea><?php print_r($_POST); ? ></textarea> ?> 
     		<div>
         		<input type="text" name="s" class="s" value="<?php echo get_query_var('s') ?>" /><input type="submit" class="searchsubmit" value="Search" />
 				<input type="hidden" name="post_type" value="story" />
     		</div>
-
-			<!--  
-			<h4 class="widgettitle">Filters</h4>
-			<h5>Filter by keyword</h5>
+			<h5>
+				Filter search
+				<select id='esa_multifilter_select' size='1' name='esa_multifilter_select'>
+					<?php $selected = isset($_POST['esa_multifilter_select']) ? $_POST['esa_multifilter_select'] : ''; ?>
+					<option value='users' 	<?php echo $selected == 'users' ? "selected='$selected'" : '' ?>	>by author</option>
+					<option value='keywords'<?php echo $selected == 'keywords' ? "selected='$selected'" : '' ?>	>by keyword</option>
+				</select>
+			</h5>
     		<div>
-    			<?php //esa_keyword_cloud(array('selected' =>  $_GET['term'])); ?>
-        		<?php // <input type="hidden" name="term" 	value="<?php echo (get_query_var('taxonomy') == 'story_keyword') ? get_query_var('term') : '' ? >" class="s" id='esa_keyword_filter' />?>
-				<?php // <input type="submit" class="searchsubmit" value="Search" /> ?>
-        		<input type="hidden" name="taxonomy" value="story_keyword" />
+				<input type='text' id='esa_multifilter' name='esa_multifilter' placeholder='filter' value="<?php echo (isset($_POST['esa_multifilter'])) ? $_POST['esa_multifilter'] : ''; ?>"/>
+				<input id='esa_multifilter_selected' name='esa_multifilter_selected' value="<?php echo (isset($_POST['esa_multifilter_selected'])) ? $_POST['esa_multifilter_selected'] : ''; ?>" />
     		</div>
-			-->
-			<h5>Filter by author</h5>
-    		<div>
-    			<?php esa_dropdown_users((int) $_GET['author']); ?>
-        		<?php // <input type="text" name="author_name" value="<?php echo get_query_var('author_name') ? >" class="s" />?>
-				<?php // <input type="submit" class="searchsubmit" value="Search" /> ?>
-    		</div>
-			<!--  
-			<h5>Filter by Europeana ID</h5>
-    		<div>
-        		<input type="hidden" name="esa_item_source" 	value="europeana" />
-        		<input type="text" 	 name="esa_item_id" 	id="esa-filter-europeana"	value="<?php echo ($_GET['esa_item_source']  == 'europeana') ? $_GET['esa_item_id'] : '' ?>" class="s" />
-        		<?php //<input type="submit" class="searchsubmit" value="Search" / ?>
-    		</div>
-    		-->
 		</form>
 	</div>
 	

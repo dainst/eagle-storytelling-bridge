@@ -201,15 +201,52 @@ add_filter('404_template', 'esa_get_search_stories_page_template');
 /**
  * search filter
  */ 
-function searchfilter($query) {
-	if ($query->is_search && is_esa($query->post_type)) {
-		$query->set('meta_key','_wp_page_template');
-		$query->set('meta_value', dirname( __FILE__ ) . '/template/search-stories.php');
-	}
-	return $query;
-}
 
-//add_filter('pre_get_posts','searchfilter');
+add_filter('pre_get_posts', function($query) {
+	if (!$query->is_search or !isset($query->query['post_type']) or !is_esa($query->query['post_type'])) {
+		return $query;
+	}
+	
+	//echo "<textarea style='width:100%; height: 250px'> ", print_r($_POST, 1), "</textarea>";
+	//echo "<textarea style='width:100%; height: 250px'> ", print_r($query, 1), "</textarea>";
+	
+	$mode 	= isset($_POST['esa_multifilter_select']) ? $_POST['esa_multifilter_select'] : null;
+	$itemid = isset($_POST['esa_multifilter_selected']) ? $_POST['esa_multifilter_selected'] : null;
+	$search = isset($_POST['esa_multifilter']) ? $_POST['esa_multifilter'] : null;
+	
+	if (!mode or (!$itemid and !search)) {
+		echo "yolo2: !mode or (!$itemid and !search)"; die();
+		return $query;
+	}
+	
+	if ($mode == 'users') {
+		if ($itemid) {
+			$query->set('author', $itemid);
+		} else {
+			$query->set('author_name', $search);
+		}
+		
+	}		
+	
+	if ($mode == 'keywords') {
+		$query->set('tax_query', array(
+			$itemid ?
+			 array(
+				'taxonomy' => 'story_keyword',
+				'field'    => 'id',
+				'terms'    => array($itemid),
+				'operator' => 'IN',
+			) :
+			array(
+				'taxonomy' => 'story_keyword',
+				'field'    => 'name',
+				'terms'    => array($search)
+			)
+		));
+	}
+	//echo "<textarea style='width:100%; height: 250px'> ", print_r($query, 1), "</textarea>";
+
+});
 
 
 
@@ -222,10 +259,17 @@ add_action('wp_enqueue_scripts', function() {
 	if (is_esa(get_post_type())) {
 
 		// css
-		wp_register_style('eagle-storytelling', plugins_url('eagle-storytelling-bridge/css/eagle-storytelling.css'));
-		wp_enqueue_style('eagle-storytelling' );
-
+		wp_register_style('eagle-storytelling', plugins_url('eagle-storytelling-bridge/css/eagle-storytelling.css'));;
+		wp_enqueue_style('eagle-storytelling');
+		
+		
 		//js
+		wp_register_script('esa-bridge-frontend', plugins_url('eagle-storytelling-bridge/js/eagle-storytelling-bridge.js'));
+		wp_enqueue_script('jquery-ui-core');
+		wp_enqueue_script('jquery-ui-widget ');
+		wp_enqueue_script('jquery-ui-autocomplete');
+		wp_enqueue_script('esa-bridge-frontend');
+		//print_r($GLOBALS['wp_scripts']);die();
 	}
 });
 
