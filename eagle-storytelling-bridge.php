@@ -118,17 +118,17 @@ add_action('init', function() {
 	
 	
 	$labels = array(
-			'name' => _x('Keywords', 'Keywords', 'Flexible'),
-			'singular_name' => _x('Keyword', 'taxonomy singular name', 'Flexible'),
-			'search_items' => __('Search Keywords', 'Flexible'),
-			'all_items' => __('All Keywords', 'Flexible'),
-			'parent_item' => __('Parent Keyword', 'Flexible'),
-			'parent_item_colon' => __('Parent Keyword:', 'Flexible'),
-			'edit_item' => __('Edit Keyword', 'Flexible'),
-			'update_item' => __('Update Keyword', 'Flexible'),
-			'add_new_item' => __('Add New Keyword', 'Flexible'),
-			'new_item_name' => __('New Keyword Name', 'Flexible'),
-			'menu_name' => __('Keyword', 'Flexible')
+			'name' => _x('Keywords', 'Keywords', 'esa'),
+			'singular_name' => _x('Keyword', 'Keyword', 'esa'),
+			'search_items' => __('Search Keywords', 'esa'),
+			'all_items' => __('All Keywords', 'esa'),
+			'parent_item' => __('Parent Keyword', 'esa'),
+			'parent_item_colon' => __('Parent Keyword:', 'esa'),
+			'edit_item' => __('Edit Keyword', 'esa'),
+			'update_item' => __('Update Keyword', 'esa'),
+			'add_new_item' => __('Add New Keyword', 'esa'),
+			'new_item_name' => __('New Keyword Name', 'esa'),
+			'menu_name' => __('Keyword', 'esa')
 	);
 
 	register_taxonomy('story_keyword', array('story'), array(
@@ -145,6 +145,42 @@ add_action('init', function() {
 			)
 	));
 	
+	
+	$labels = array(
+			'name' 				=> _x('lng', 'Keywords', 'esa'),
+			'singular_name' 	=> _x('lng', 'lng', 'esa'),
+			'search_items' 		=> __('Search lng', 'esa'),
+			'all_items' 		=> __('All lng', 'esa'),
+			'parent_item' 		=> __('Parent lng', 'esa'),
+			'parent_item_colon' => __('Parent lng:', 'esa'),
+			'edit_item' 		=> __('Edit lng', 'esa'),
+			'update_item' 		=> __('Update lng', 'esa'),
+			'add_new_item' 		=> __('Add New lng', 'esa'),
+			'new_item_name' 	=> __('New lng Name', 'esa'),
+			'menu_name' 		=> __('lng', 'esa')
+	);
+	
+	register_taxonomy('story_lng', 'story', array(
+			'hierarchical' => false,
+			'label' => 'Language',
+			'show_ui' => true,
+			'show_in_menu' => false,
+			'show_in_nav_menus' => false,
+			'show_tagcloud' => false,
+			'show_in_quick_edit' => false,
+			'meta_box_cb' => 'esa_language_meta_box',
+			'query_var' => true,
+			'rewrite' => array('slug' => 'lng'),
+			'capabilities' => array(
+/*					'manage_terms' 	=> 'manage_story_keyword',
+					'edit_terms' 	=> 'edit_story_keyword',
+					'delete_terms' 	=> 'delete_story_keyword',*/
+					'assign_terms' 	=> 'assign_story_lng'
+			)
+	));
+	
+	
+	
 	// override esa settings
 	global $esa_settings;
 	$esa_settings = array_merge($esa_settings, array(
@@ -155,6 +191,42 @@ add_action('init', function() {
 	
 	
 }, 0);
+
+
+function esa_language_meta_box($post) {
+	require_once dirname( __FILE__ ) . '/inc/languages.php';
+	echo "<select id='story_lng' size='1' name='esa_story_lng'>";
+	$the_lng = wp_get_object_terms($post->ID, 'story_lng');
+	
+	foreach(esa_language_codes() as $lng) {
+		$enclng = urlencode($lng);
+		$selected = $the_lng[0]->name == $lng ? "selected='selected'" : ''; 
+		echo "<option value='$enclng' $selected>$lng</option>";
+	}				
+	echo "</select>";
+	
+	//echo $post->ID, "<textarea>", print_r($the_lng,1),"</textarea>";
+}
+
+/**
+ * save language
+ */
+add_action('save_post', function($post_id) {
+	
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+		return $post_id;
+	}
+	if (!('story' == $_POST['post_type']) and current_user_can('edit_story', $post_id)) { 
+		return $post_id;
+	} 
+	
+	//$post = get_post($post_id); // OR $post->post_type != 'revision'
+	
+	$lng = urldecode($_POST['esa_story_lng']);
+	wp_set_object_terms($post_id, $lng, 'story_lng');
+
+	return $lng;
+});
 
 
 /**
@@ -213,9 +285,8 @@ add_filter('pre_get_posts', function($query) {
 	$mode 	= isset($_POST['esa_multifilter_select']) ? $_POST['esa_multifilter_select'] : null;
 	$itemid = isset($_POST['esa_multifilter_selected']) ? $_POST['esa_multifilter_selected'] : null;
 	$search = isset($_POST['esa_multifilter']) ? $_POST['esa_multifilter'] : null;
-	
-	if (!mode or (!$itemid and !search)) {
-		echo "yolo2: !mode or (!$itemid and !search)"; die();
+
+	if (!mode or (!$itemid and !$search)) {
 		return $query;
 	}
 	
@@ -244,6 +315,27 @@ add_filter('pre_get_posts', function($query) {
 			)
 		));
 	}
+	
+	
+	if ($mode == 'language') {
+		$query->set('tax_query', array(
+				$itemid ?
+				array(
+						'taxonomy' => 'story_lng',
+						'field'    => 'id',
+						'terms'    => array($itemid),
+						'operator' => 'IN',
+				) :
+				array(
+						'taxonomy' => 'story_lng',
+						'field'    => 'name',
+						'terms'    => array($search)
+				)
+		));
+	}
+	
+	
+	
 	//echo "<textarea style='width:100%; height: 250px'> ", print_r($query, 1), "</textarea>";
 
 });
@@ -261,7 +353,6 @@ add_action('wp_enqueue_scripts', function() {
 		// css
 		wp_register_style('eagle-storytelling', plugins_url('eagle-storytelling-bridge/css/eagle-storytelling.css'));;
 		wp_enqueue_style('eagle-storytelling');
-		
 		
 		//js
 		wp_register_script('esa-bridge-frontend', plugins_url('eagle-storytelling-bridge/js/eagle-storytelling-bridge.js'));
@@ -295,6 +386,9 @@ add_action('add_meta_boxes', function () {
 	
 });
 
+/**
+ * save featured
+ */
 add_action('save_post', function($post_id) {
 	
 	// Verify that the nonce is valid.

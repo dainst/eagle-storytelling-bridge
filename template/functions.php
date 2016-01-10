@@ -97,7 +97,9 @@ function esa_autocomplete_users($q) {
 		group by
 			posts.post_author
 		order by
-			display_name";
+			display_name
+		limit
+			10";
 
 	return $wpdb->get_results($sql);
 }
@@ -118,9 +120,32 @@ function esa_autocomplete_keywords($q) {
 		        or term.slug like '%$q%'
 			)
 		order by
-			term.name";
+			term.name
+		limit
+			10";
 	return $wpdb->get_results($sql);
 }
+
+function esa_autocomplete_language($q) {
+	global $wpdb;
+	$sql = "
+		select
+			term.term_id as itemid,
+			term.name as value
+		from
+			{$wpdb->prefix}terms as term
+		left join {$wpdb->prefix}term_taxonomy as tax on (tax.term_id = term.term_id)
+		where
+			tax.taxonomy = 'story_lng'
+			and tax.count > 0 
+		order by
+			term.name
+		limit
+			10";
+		
+	return $wpdb->get_results($sql);
+}
+
 
 function esa_highlight_query($q, $term) {
 

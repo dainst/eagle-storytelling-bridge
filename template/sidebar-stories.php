@@ -29,6 +29,7 @@
 					<?php $selected = isset($_POST['esa_multifilter_select']) ? $_POST['esa_multifilter_select'] : ''; ?>
 					<option value='users' 	<?php echo $selected == 'users' ? "selected='$selected'" : '' ?>	>by author</option>
 					<option value='keywords'<?php echo $selected == 'keywords' ? "selected='$selected'" : '' ?>	>by keyword</option>
+					<option value='language'<?php echo $selected == 'language' ? "selected='$selected'" : '' ?>	>by language</option>
 				</select>
 			</h5>
     		<div>

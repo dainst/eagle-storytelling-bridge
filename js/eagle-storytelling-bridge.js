@@ -5,7 +5,7 @@ jQuery(document).ready(function() {
 
 
 	.autocomplete({
-		minLength: 2,
+		minLength: 0,
 		source: function(request, response) {
 			jQuery('#esa_multifilter_selected').val('');
 			
