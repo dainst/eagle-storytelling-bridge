@@ -244,14 +244,14 @@ function esa_search_string() {
 	
 	$labels = array(
 		'language'	=> 'IN %',
-		'keywords'	=> 'LABELED WITH KEYWORD >>%<<',
+		'keywords'	=> 'LABELED WITH KEYWORD &raquo;%&laquo;',
 		'users'		=> 'BY %'
 	);
 	
 	
 	$filter = ($mode and isset($labels[$mode]) and $search) ? str_replace('%', $search, $labels[$mode]) : '';
 	
-	$searchterm = (isset($params['s']) and $params['s']) ? "STORIES WITH >>{$params['s']}<<" : "STORIES";
+	$searchterm = (isset($params['s']) and $params['s']) ? "STORIES WITH &raquo;{$params['s']}&laquo;" : "STORIES";
 	
 	return "$searchterm $filter";
 }

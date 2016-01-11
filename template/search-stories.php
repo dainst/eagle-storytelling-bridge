@@ -28,26 +28,26 @@
 			
 			
 			<div class="post-content">
-				<?php the_content(); ?>
 				
 				<div id="et_pt_blog" class="responsive">
 					<?php		
 						if (have_posts()) {
 							while (have_posts()) {
-								the_post(); 
 								include('loop-story.php');
 							}
 					 	
 							echo '<div class="page-nav clearfix">';
+							/*
 							if(function_exists('wp_pagenavi')) {
 								echo wp_pagenavi(); 
 							} else { 
 								get_template_part('includes/navigation');
 							}
+							*/
 							echo "</div>";
 							
 						} else {
-							echo "No Stories found that are matching your criteria.";
+							echo "<p>No Stories found that are matching your criteria.</p>";
 						}
 						wp_reset_query();
 					?>

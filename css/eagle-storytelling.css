@@ -51,16 +51,28 @@ input[type="week"]
 }
 
 /* esa specific styles */
-.story-thumpnail {
+.story-thumbnail {
 	float: left;
 	margin-right: 1em;
+	max-height: 160px;
+	overflow: hidden
 }
 
-.story-thumpnail-list {
+.story-thumbnail img {
+	width: 150px;
+}
+
+.esa_pt_blogmeta {
+	padding: 0px 5px 7px 4px;
+	line-height: normal;
+}
+
+
+.story-thumbnail-list {
 	margin-left: -36px;
 }
 
-.esa_nothumpnail {
+.esa_nothumbnail {
 	margin-left: 36px;
 }
 
@@ -72,10 +84,11 @@ input[type="week"]
 	font-style: italic;
 }
 
-#esa_searchform h5, 
-#esa_searchform h4{
-	margin-top: 1em
+.sidebar-stories .widget {
+	padding-top: 16px;
+	padding-bottom: 16px;
 }
+
 
 #esa_multifilter {
 	width: 100%;
@@ -97,7 +110,8 @@ input[type="week"]
 	font-size: 16px;
 	padding: 0px;
 	margin: 0px;
-	font-family: "Open Sans",Arial,sans-serif
+	font-family: "Open Sans",Arial,sans-serif;
+	width: 127px;
 }
 
 .ui-autocomplete {
@@ -135,6 +149,7 @@ ul.ui-autocomplete:before {
 .sharelink {
 	text-align: right;
 	line-height: 20px;
+	padding: 36px 0px 10px 36px;
 }
 
 #esa_items_overview_map {

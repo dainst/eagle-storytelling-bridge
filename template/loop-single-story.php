@@ -6,10 +6,6 @@
 
 		<?php $thumbnail_url = esa_thumbnail(get_post());  ?>
 
-		<h1 class="page_title"><?php the_title(); ?></h1>
-	
-		
-		
 		<div class="sharelink">
 			<a class="addthis_button_compact"><span>Share</span></a>
 			<?php if(current_user_can( 'edit_others_posts', get_ ) || ($post->post_author == $current_user->ID))  { ?>
@@ -17,7 +13,13 @@
 			<?php }?>
 		</div>
 		
-		<div class="et_pt_blogmeta <?php echo (!$thumbnail_url)  ? 'esa_nothumpnail' : '' ?>">
+		<h1 class="page_title"><?php the_title(); ?></h1>
+	
+		
+		
+
+		
+		<div class="et_pt_blogmeta <?php echo (!$thumbnail_url)  ? 'esa_nothumbnail' : '' ?>">
 			<?php 
 				echo "Posted by <a href='"; bloginfo('url'); echo "?s=&post_type=story&author="; the_author_meta('ID'); echo "'>"; the_author(); echo "</a>";
 				echo " on "; the_time(et_get_option('flexible_date_format'));

@@ -1,5 +1,5 @@
 <?php if ( is_active_sidebar( 'sidebar' ) ){ ?>
-	<div id="sidebar">
+	<div id="sidebar" class="sidebar-stories">
 	
 	
 	
@@ -20,7 +20,12 @@
 			<h4 class="widgettitle">Search Stories</h4>
 			<?php //<textarea><?php print_r($_POST); ? ></textarea> ?> 
     		<div>
-        		<input type="text" name="s" class="s" value="<?php echo get_query_var('s') ?>" /><input type="submit" class="searchsubmit" value="Search" />
+        		<input 
+        			type="text" 
+        			name="s" 
+        			class="s" 
+        			value="<?php echo get_query_var('s') ?>"
+        		/><input type="submit" class="searchsubmit" value="Search" />
 				<input type="hidden" name="post_type" value="story" />
     		</div>
 			<h5>
@@ -37,7 +42,6 @@
 					type='text'
 					id='esa_multifilter'
 					name='esa_multifilter' 
-					placeholder='filter' 
 					value="<?php echo (isset($_POST['esa_multifilter'])) ? $_POST['esa_multifilter'] : ''; ?>"
 				/>
 				<input
@@ -79,19 +83,20 @@
 	<div class="widget widget_edit">
 		<?php if (is_user_logged_in()) { ?>
 			<h4 class='widgettitle'><?php echo 'Logged in as '.wp_get_current_user()->user_login ?></h4>
-			<p>
+			<ul>
 				<?php if(is_single() and (current_user_can('edit_others_posts', get_) or ($post->post_author == $current_user->ID)))  { ?>
-					<?php edit_post_link('Edit this story'); ?>	<br>
+					<li><?php edit_post_link('Edit this story'); ?></li>
 				<?php }?>
-				<a href="<?php echo site_url(); ?>/wp-admin/post-new.php?post_type=story">Create new story</a><br>
-				<a href="<?php echo site_url(); ?>/wp-admin/edit.php?post_type=story">Edit existing stories</a><br><br>
-				<a href="<?php echo wp_logout_url() ?>">Logout</a>
-			</p>
+				<li><a href="<?php echo site_url(); ?>/wp-admin/post-new.php?post_type=story">Create new story</a></li>
+				<li><a href="<?php echo site_url(); ?>/wp-admin/edit.php?post_type=story">Edit existing stories</a></li>
+				<li></li>
+				<li><a href="<?php echo wp_logout_url() ?>">Logout</a></li>
+			</ul>
 		<?php } else { ?>
 			<h4 class='widgettitle'>Not logged in</h4>
-			<p>
-				<a href="<?php echo wp_login_url(site_url('/stories/')); ?>" title="Login">Log in (or create an account)</a> to create a story.
-			</p>
+			<ul>
+				<li><a href="<?php echo wp_login_url(site_url('/stories/')); ?>" title="Login">Log in (or create an account)</a> to create a story.</li>
+			</ul>
 		<?php }	?>
 	</div>
 		 		 
