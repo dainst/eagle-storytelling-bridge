@@ -79,14 +79,37 @@ function esa_get_story_keywords() {
 
 /** the new filter thing */
 
+function esa_autocomplete_users_top($q) {
 
+	global $wpdb;
+	$sql = "
+		select
+			users.ID as itemid,
+			display_name as value,
+			concat(display_name, ' (', count(*), ')') as label
+		from
+			{$wpdb->prefix}posts as posts
+			left join {$wpdb->prefix}users as users on (posts.post_author=users.ID)
+		where
+			post_type='story'
+			and post_status='publish'
+		group by
+			posts.post_author
+		order by
+			count(*) desc
+		limit
+			5";
+
+	return $wpdb->get_results($sql);
+}
 
 function esa_autocomplete_users($q) {
 	global $wpdb;
 	$sql = "
 		select
 			users.ID as itemid,
-			display_name as value
+			display_name as value,
+			concat(display_name, ' (', count(*), ')') as label
 		from
 			{$wpdb->prefix}posts as posts
 			left join {$wpdb->prefix}users as users on (posts.post_author=users.ID)
@@ -104,11 +127,31 @@ function esa_autocomplete_users($q) {
 	return $wpdb->get_results($sql);
 }
 
+function esa_autocomplete_keywords_top($q) {
+	global $wpdb;
+			$sql = "
+				select
+					term.term_id as itemid,
+					concat(term.name, ' (', tax.count, ')') as label,
+					term.name as value
+				from
+					{$wpdb->prefix}terms as term
+					left join {$wpdb->prefix}term_taxonomy as tax on (tax.term_id = term.term_id)
+				where
+					tax.taxonomy = 'story_keyword'
+				order by
+					tax.count desc
+				limit
+					5";
+	return $wpdb->get_results($sql);
+}
+
 function esa_autocomplete_keywords($q) {
 	global $wpdb;
 	$sql = "
 		select 
 			term.term_id as itemid,
+			concat(term.name, ' (', tax.count, ')') as label,
 		    term.name as value
 		from 
 			{$wpdb->prefix}terms as term
@@ -126,32 +169,91 @@ function esa_autocomplete_keywords($q) {
 	return $wpdb->get_results($sql);
 }
 
+function esa_autocomplete_language_top($q) {
+	return array(
+		(object) array(
+			'itemid' => 'English',
+			'value'  => 'English',
+			'label'  => 'English'
+		)
+	);
+
+}
+
 function esa_autocomplete_language($q) {
 	global $wpdb;
 	$sql = "
-		select
-			term.term_id as itemid,
-			term.name as value
-		from
-			{$wpdb->prefix}terms as term
-		left join {$wpdb->prefix}term_taxonomy as tax on (tax.term_id = term.term_id)
-		where
-			tax.taxonomy = 'story_lng'
-			and tax.count > 0 
-		order by
-			term.name
-		limit
-			10";
-		
+		select 
+			'English' as itemid,
+    		'English' as label,
+    		'English' as value
+		union
+		(		
+			select
+				term.term_id as itemid,
+				concat(term.name, ' (', tax.count, ')') as label,
+				term.name as value
+			from
+				{$wpdb->prefix}terms as term
+			left join {$wpdb->prefix}term_taxonomy as tax on (tax.term_id = term.term_id)
+			where
+				tax.taxonomy = 'story_lng'
+				and tax.count > 0 
+				and (
+					term.name like '%$q%'
+		        	or term.slug like '%$q%'
+				)
+			order by
+				term.name
+			limit
+				10
+		)";
+
 	return $wpdb->get_results($sql);
 }
 
 
 function esa_highlight_query($q, $term) {
-
+		
 		$q = preg_quote($q, '/');
 
 		return preg_replace("#$q#i", '<b>$0</b>', $term);
+}
+
+
+function esa_search_string() {
+	$params = count($_POST) ? $_POST : $_GET;
+	
+	// from multifilter
+	$mode 	= isset($params['esa_multifilter_select']) ? $params['esa_multifilter_select'] : null;
+	$itemid = isset($params['esa_multifilter_selected']) ? $params['esa_multifilter_selected'] : null;
+	$search = isset($params['esa_multifilter']) ? $params['esa_multifilter'] : null;
+	
+	// from classic single filter / link
+	if (isset($params['taxonomy']) and ($params['taxonomy']  == 'story_keyword')) {
+		$mode = 'keywords';
+		$search = isset($params['term']) ? $params['term'] : '';
+	}
+
+	if (isset($params['author']) and isset($params['author'])) {
+		$mode = 'users';
+		$user = get_user_by('id', $params['author']);
+		$search = $user->user_nicename;
+	}	
+		
+	
+	$labels = array(
+		'language'	=> 'IN %',
+		'keywords'	=> 'LABELED WITH KEYWORD >>%<<',
+		'users'		=> 'BY %'
+	);
+	
+	
+	$filter = ($mode and isset($labels[$mode]) and $search) ? str_replace('%', $search, $labels[$mode]) : '';
+	
+	$searchterm = (isset($params['s']) and $params['s']) ? "STORIES WITH >>{$params['s']}<<" : "STORIES";
+	
+	return "$searchterm $filter";
 }
 
 
@@ -161,14 +263,18 @@ add_action('wp_ajax_esa_autocomplete', function() {
 		$set = isset($_POST['set']) ? $_POST['set'] : false;
 		$q = isset($_POST['q']) ? $_POST['q'] : false;
 		
-		if (!$set or !function_exists("esa_autocomplete_$set")) {
+		$func = ($q == '' or $q == '###top###') ? "esa_autocomplete_{$set}_top": "esa_autocomplete_$set";
+		
+		if (!$set or !function_exists($func)) {
 			throw new Exception("set unknown: $set");
 		}
+
+		$result = call_user_func($func, $q);
 		
-		$result = call_user_func("esa_autocomplete_$set", $q);
-		//wp_send_json_success($result);
-		foreach ($result as $k => $v) {
-			$result[$k]->label = esa_highlight_query($q, $v->value);
+		if ($q != '###top###') {
+			foreach ($result as $k => $v) {
+				$result[$k]->label = esa_highlight_query($q, $v->label);
+			}
 		}
 		
 		echo json_encode($result);

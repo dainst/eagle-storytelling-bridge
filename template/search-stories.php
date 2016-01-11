@@ -16,7 +16,7 @@
 	    
 	    <h1 class="page_title">
 		    <?php if (is_search()) {
-		    	echo ($q = get_search_query()) ? "SEARCH RESULTS FOR '$q'" :  "SEARCH RESULTS";
+		    	echo esa_search_string();
 		    } else if (is_archive()) {
 		    	echo single_term_title();
 			} ?>

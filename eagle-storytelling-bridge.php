@@ -223,7 +223,12 @@ add_action('save_post', function($post_id) {
 	//$post = get_post($post_id); // OR $post->post_type != 'revision'
 	
 	$lng = urldecode($_POST['esa_story_lng']);
-	wp_set_object_terms($post_id, $lng, 'story_lng');
+	
+	if ($lng == 'English') {
+		wp_delete_object_term_relationships($post_id, 'story_lng');
+	} else {
+		wp_set_object_terms($post_id, $lng, 'story_lng');
+	}
 
 	return $lng;
 });
@@ -318,29 +323,52 @@ add_filter('pre_get_posts', function($query) {
 	
 	
 	if ($mode == 'language') {
-		$query->set('tax_query', array(
-				$itemid ?
+		if (strlen($search) == 2)  {
+			require_once dirname( __FILE__ ) . '/inc/languages.php';
+			$llist = esa_language_codes();
+			$search = $llist[$search];
+		}
+		
+		
+		if ($itemid == 'English' OR $search == 'English') {
+			$taxq = array(
 				array(
+					'taxonomy' => 'story_lng',
+					'field'    => 'id',
+					'operator' => 'NOT EXISTS',
+				)
+			);
+		} else {
+		
+			$taxq = array(
+				$itemid ?
+					array(
 						'taxonomy' => 'story_lng',
 						'field'    => 'id',
 						'terms'    => array($itemid),
 						'operator' => 'IN',
-				) :
-				array(
+					) :
+					array(
 						'taxonomy' => 'story_lng',
 						'field'    => 'name',
 						'terms'    => array($search)
-				)
-		));
+					)
+				);
+		}
+		$query->set('tax_query', $taxq);
 	}
 	
-	
-	
-	//echo "<textarea style='width:100%; height: 250px'> ", print_r($query, 1), "</textarea>";
-
 });
+	 
 
-
+/**
+ * freakin debuggin
+ 
+add_filter( 'posts_request', function ($input) {
+	var_dump($input);
+	return $input;
+}
+*/
 
 /**
  * Register style sheets and javascript
@@ -371,17 +399,17 @@ add_action('wp_enqueue_scripts', function() {
 add_action('add_meta_boxes', function () {
 
 	add_meta_box(
-			'esa_featured',
-			'Featured Story',
-			function($post) {
-				wp_nonce_field('esa_featured_meta_box_nonce', 'esa_featured_meta_box_nonce');
-				$value = get_post_meta($post->ID, 'esa_featured', true);
-				
-				$checked = $value ? 'checked="checked"' : '';
-				echo '<input type="checkbox" id="esa_featured" name="esa_featured"' . $checked . '" size="25" />';
-				echo '<label for="esa_featured">Set this as a  featured story</label>';
-			},
-			'story'
+		'esa_featured',
+		'Featured Story',
+		function($post) {
+			wp_nonce_field('esa_featured_meta_box_nonce', 'esa_featured_meta_box_nonce');
+			$value = get_post_meta($post->ID, 'esa_featured', true);
+			
+			$checked = $value ? 'checked="checked"' : '';
+			echo '<input type="checkbox" id="esa_featured" name="esa_featured"' . $checked . '" size="25" />';
+			echo '<label for="esa_featured">Set this as a  featured story</label>';
+		},
+		'story'
 	);
 	
 });

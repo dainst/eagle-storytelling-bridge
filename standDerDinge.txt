@@ -1,5 +1,3 @@
-MultiFilter 
-- UI so halbwegs implementiert
-- wirft noch keine echten Daten
-- beeinflusst die Suche noch nicht
-- language
+MultiFilter fertig
+
+- chrome testen!!!

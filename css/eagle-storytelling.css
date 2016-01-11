@@ -96,7 +96,8 @@ input[type="week"]
 	box-sizing: content-box;
 	font-size: 16px;
 	padding: 0px;
-	margin: 0px
+	margin: 0px;
+	font-family: "Open Sans",Arial,sans-serif
 }
 
 .ui-autocomplete {
@@ -106,8 +107,19 @@ input[type="week"]
 	padding: 2px;
 }
 
+ul.ui-autocomplete:before {
+	content: 'Suggestions';
+	color: white;
+	background: silver;
+	font-size: small;
+	font-weight: bold;
+	display: block;
+	padding-left: 1px
+}
+
 .ui-autocomplete li {
-	cursor: pointer
+	cursor: pointer;
+	padding-left: 1px
 }
 
 .ui-autocomplete li:hover,

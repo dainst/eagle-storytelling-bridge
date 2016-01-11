@@ -33,8 +33,19 @@
 				</select>
 			</h5>
     		<div>
-				<input type='text' id='esa_multifilter' name='esa_multifilter' placeholder='filter' value="<?php echo (isset($_POST['esa_multifilter'])) ? $_POST['esa_multifilter'] : ''; ?>"/>
-				<input id='esa_multifilter_selected' name='esa_multifilter_selected' value="<?php echo (isset($_POST['esa_multifilter_selected'])) ? $_POST['esa_multifilter_selected'] : ''; ?>" />
+				<input 
+					type='text'
+					id='esa_multifilter'
+					name='esa_multifilter' 
+					placeholder='filter' 
+					value="<?php echo (isset($_POST['esa_multifilter'])) ? $_POST['esa_multifilter'] : ''; ?>"
+				/>
+				<input
+					type='hidden'
+					id='esa_multifilter_selected'
+					name='esa_multifilter_selected'
+					value="<?php echo (isset($_POST['esa_multifilter_selected'])) ? $_POST['esa_multifilter_selected'] : ''; ?>" 
+				/>
     		</div>
 		</form>
 	</div>
