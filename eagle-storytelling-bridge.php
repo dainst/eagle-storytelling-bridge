@@ -25,20 +25,10 @@ require_once('template/functions.php');
  * User Specific Settings
  */
 
-/*
+
  register_activation_hook(__FILE__, function() {
- add_role('esa_story_author', 'Story Author', array());
- add_role('esa_story_contributor', 'Story Contributor', array());
- });
 
-
- register_deactivation_hook(__FILE__, function() {
- remove_role('esa_story_author');
- remove_role('esa_story_contributor');
- });
- */
-add_action('admin_init', function () {
-
+	
 	$roles = array('subscriber', 'editor', 'author', 'administrator');
 	foreach ($roles as $role) {
 		$role = get_role($role);
@@ -56,6 +46,12 @@ add_action('admin_init', function () {
 		$role->add_cap('upload_files');
 	}
 
+	$roles = array('editor', 'author', 'administrator');
+	foreach ($roles as $role) {
+		$role = get_role($role);
+		$role->add_cap('esa_manage_full_library');
+	}
+	
 	$roles = array('administrator');
 	foreach ($roles as $role) {
 		$role = get_role($role);
@@ -63,17 +59,26 @@ add_action('admin_init', function () {
 		$role->add_cap('read_private_posts');
 	}
 	
-	global $esa_settings;
-	
+
+
 });
 
-
-
+ /*
+ 	add_action('init', function() {
+ 		$role = get_role('subscriber');
+ 		echo "<pre>";
+ 		print_r($role);
+ 		echo "</pre><hr>";
+ 		print_r(current_user_can('esa_manage_full_library'));
+ 		wp_die();
+ 	});
+ 	*/
+ 	
 /**
  * custom post type: story && custom taxonomy: story_keyword
  */
 add_action('init', function() {
-	
+
 	$labels = array(
 			'name' => _x('Stories', 'post type general name', 'Flexible'),
 			'singular_name' => _x('Story', 'post type singular name', 'Flexible'),
@@ -146,20 +151,6 @@ add_action('init', function() {
 	));
 	
 	
-	$labels = array(
-			'name' 				=> _x('lng', 'Keywords', 'esa'),
-			'singular_name' 	=> _x('lng', 'lng', 'esa'),
-			'search_items' 		=> __('Search lng', 'esa'),
-			'all_items' 		=> __('All lng', 'esa'),
-			'parent_item' 		=> __('Parent lng', 'esa'),
-			'parent_item_colon' => __('Parent lng:', 'esa'),
-			'edit_item' 		=> __('Edit lng', 'esa'),
-			'update_item' 		=> __('Update lng', 'esa'),
-			'add_new_item' 		=> __('Add New lng', 'esa'),
-			'new_item_name' 	=> __('New lng Name', 'esa'),
-			'menu_name' 		=> __('lng', 'esa')
-	);
-	
 	register_taxonomy('story_lng', 'story', array(
 			'hierarchical' => false,
 			'label' => 'Language',
@@ -183,6 +174,7 @@ add_action('init', function() {
 	
 	// override esa settings
 	global $esa_settings;
+	$esa_settings =  !is_array($esa_settings) ? array() : $esa_settings;
 	$esa_settings = array_merge($esa_settings, array(
 			'post_types' => array('story'),
 			'add_media_entry' => 'Insert Epigraphic Datasource'
@@ -444,4 +436,59 @@ add_action('save_post', function($post_id) {
 // menu
 add_action('init', function() {
 	register_nav_menu('esa-menu',__( 'Stories Menu' ));
+});
+
+add_action('admin_menu', function() {
+	if(!current_user_can('esa_manage_full_library')) {
+		remove_menu_page('upload.php');
+	}
+});
+
+//Manage Your Media Only
+add_action('pre_get_posts', function($query) {
+	
+	if (!defined('DOING_AJAX') or !DOING_AJAX or ($query->query['post_type'] != 'attachment')) {
+		return; 
+	}
+	if (current_user_can('esa_manage_full_library')) {
+		return;	
+	}
+	if (!isset($query->query['post_parent'])) {
+		if (isset($_POST['post_id']) and $_POST['post_id']) { //  show all, show images etc.
+			$query->set('post_parent', $_POST['post_id']); // show only attachments if possible
+		} else {
+			wp_send_json_success(array()); // show nothing and allow upload
+		}
+	} else if (isset($query->query['post_parent']) and !$query->query['post_parent']) { // show unattached
+		wp_send_json_error('not permitted'); // show nothing and do not allow upload
+	}	
+});
+
+//  dashboard
+add_action('wp_dashboard_setup', function() {
+	// Globalize the metaboxes array, this holds all the widgets for wp-admin
+	global $wp_meta_boxes;
+	
+	if(!current_user_can('esa_manage_full_library')) {
+		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
+		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+		unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
+	}
+
+});
+// only show own posts
+add_filter('pre_get_posts',	function ($query) {
+
+	if(!current_user_can('esa_manage_full_library')) {
+		global $user_ID;
+		$query->set('author',  $user_ID);
+	}
+
+	return $query;
+});
+// some hacky shit
+add_action('do_meta_boxes', function() {
+	remove_meta_box('at_widget', 'story', 'side');
+	remove_meta_box('at_widget', 'story', 'default');
+	remove_meta_box('at_widget', 'story', 'advanced'); 
 });
