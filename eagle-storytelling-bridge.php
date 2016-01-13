@@ -486,9 +486,25 @@ add_filter('pre_get_posts',	function ($query) {
 
 	return $query;
 });
-// some hacky shit
+// some hacky shit to remove the "show social share buttons" dialogue from the addthin-plugin
 add_action('do_meta_boxes', function() {
 	remove_meta_box('at_widget', 'story', 'side');
 	remove_meta_box('at_widget', 'story', 'default');
 	remove_meta_box('at_widget', 'story', 'advanced'); 
 });
+// better captions in add media dialogue
+add_filter('gettext', function($translation, $text) {
+	
+	$hacky_translations = array(
+			'Add Media' 		=> 'Add Media or epigraphic Datasource',
+			'Insert Media'		=> 'Upload Media',
+			'Insert from URL'	=> 'Insert Image from URL',
+			'Link Text'			=> 'Use this to insert images or other media from popular sites like youtube, imgut or flickr. Insert Link Text below.'
+	);
+	
+	
+	if(is_esa() and isset($hacky_translations[$text])) {
+		return $hacky_translations[$text];
+	}
+	return $translation;
+}, 10, 2);

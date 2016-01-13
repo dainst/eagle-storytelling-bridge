@@ -257,7 +257,7 @@ function esa_search_string() {
 }
 
 
-add_action('wp_ajax_esa_autocomplete', function() {
+function wp_ajax_esa_autocomplete() {
 
 	try {
 		$set = isset($_POST['set']) ? $_POST['set'] : false;
@@ -288,5 +288,7 @@ add_action('wp_ajax_esa_autocomplete', function() {
 			'debug' => print_r($_POST, 1)
 		));
 	}
-});
+};
+add_action('wp_ajax_esa_autocomplete', 'wp_ajax_esa_autocomplete');
+add_action('wp_ajax_nopriv_esa_autocomplete', 'wp_ajax_esa_autocomplete');
 ?>

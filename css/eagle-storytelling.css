@@ -91,7 +91,7 @@ input[type="week"]
 
 
 #esa_multifilter {
-	width: 100%;
+	width: 199px;
 	height: 24px;
     background-color: #FFF;
     border: 1px solid #BBB;
@@ -111,8 +111,9 @@ input[type="week"]
 	padding: 0px;
 	margin: 0px;
 	font-family: "Open Sans",Arial,sans-serif;
-	width: 127px;
+	width: 122px;
 }
+
 
 .ui-autocomplete {
 	background: white;
