@@ -275,14 +275,18 @@ add_filter('pre_get_posts', function($query) {
 	if (!$query->is_search or !isset($query->query['post_type']) or !is_esa($query->query['post_type'])) {
 		return $query;
 	}
-	
+	// 1337-haxxorz do it so!
+	//$_POST = $_GET;
 	//echo "<textarea style='width:100%; height: 250px'> ", print_r($_POST, 1), "</textarea>";
 	//echo "<textarea style='width:100%; height: 250px'> ", print_r($query, 1), "</textarea>";
-	
+
 	$mode 	= isset($_POST['esa_multifilter_select']) ? $_POST['esa_multifilter_select'] : null;
 	$itemid = isset($_POST['esa_multifilter_selected']) ? $_POST['esa_multifilter_selected'] : null;
 	$search = isset($_POST['esa_multifilter']) ? $_POST['esa_multifilter'] : null;
 
+
+	$query->set('esa_multifilter', $search);
+	
 	if (!mode or (!$itemid and !$search)) {
 		return $query;
 	}
@@ -347,6 +351,7 @@ add_filter('pre_get_posts', function($query) {
 					)
 				);
 		}
+		
 		$query->set('tax_query', $taxq);
 	}
 	
@@ -499,7 +504,9 @@ add_filter('gettext', function($translation, $text) {
 			'Add Media' 		=> 'Add Media or epigraphic Datasource',
 			'Insert Media'		=> 'Upload Media',
 			'Insert from URL'	=> 'Insert Image from URL',
-			'Link Text'			=> 'Use this to insert images or other media from popular sites like youtube, imgut or flickr. Insert Link Text below.'
+			'Link Text'			=> 'Use this to insert images or other media from popular sites like youtube, imgut or flickr. Insert Link Text below.',
+			'Insert into Post'	=> 'Insert into Story'
+			
 	);
 	
 	

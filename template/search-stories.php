@@ -11,15 +11,11 @@
 
 <?php include ('breadcrumbs-stories.php'); ?>
 
-<div id="content-area" class="clearfix<?php if ( $fullwidth ) echo ' fullwidth'; ?>">
+<div id="content-area" class="stories-list  clearfix<?php if ( $fullwidth ) echo ' fullwidth'; ?>">
 	<div id="left-area">
 	    
 	    <h1 class="page_title">
-		    <?php if (is_search()) {
-		    	echo esa_search_string();
-		    } else if (is_archive()) {
-		    	echo single_term_title();
-			} ?>
+		    <?php echo esa_search_string(); ?>
 	    </h1>
 		
 		
@@ -30,20 +26,14 @@
 			<div class="post-content">
 				
 				<div id="et_pt_blog" class="responsive">
-					<?php		
+					<?php	
 						if (have_posts()) {
-							while (have_posts()) {
+							while ( have_posts() ) {
+								the_post();
 								include('loop-story.php');
-							}
-					 	
+							} // end while
 							echo '<div class="page-nav clearfix">';
-							/*
-							if(function_exists('wp_pagenavi')) {
-								echo wp_pagenavi(); 
-							} else { 
-								get_template_part('includes/navigation');
-							}
-							*/
+							echo esa_pagenavi();
 							echo "</div>";
 							
 						} else {
@@ -52,8 +42,6 @@
 						wp_reset_query();
 					?>
 				</div> <!-- end #et_pt_blog -->
-				
-				<?php wp_link_pages(array('before' => '<p><strong>'.esc_attr__('Pages','Flexible').':</strong> ', 'after' => '</p>', 'next_or_number' => 'number')); ?>
 			</div> 	<!-- end .post-content -->
 		</article> <!-- end .entry -->
 	</div> <!-- end #left_area -->

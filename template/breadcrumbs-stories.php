@@ -5,7 +5,9 @@
 				
 				<a href="<?php bloginfo('url'); ?>/stories">Stories</a> <span class="raquo">&raquo;</span>
 				
-				<?php if( is_tag() ) { ?>
+				<?php if ($esa_searchstring = esa_search_string()) { ?>
+					<?php echo $esa_searchstring; // generate search string with esa function; keep the rest just in case ?>
+				<?php } elseif( is_tag() ) { ?>
 					<?php esc_html_e('Posts Tagged ','Flexible') ?><span class="raquo">&quot;</span><?php single_tag_title(); echo('&quot;'); ?>
 				<?php } elseif (is_day()) { ?>
 					<?php esc_html_e('Posts made in','Flexible') ?> <?php the_time('F jS, Y'); ?>

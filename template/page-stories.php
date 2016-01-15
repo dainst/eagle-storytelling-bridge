@@ -14,14 +14,16 @@ $et_ptemplate_blog_perpage = 5;
 
 <?php include ('breadcrumbs-stories.php'); ?>
 
-<div id="content-area" class="clearfix<?php if ( $fullwidth ) echo ' fullwidth'; ?>">
+<div id="content-area" class="stories-list clearfix<?php if ( $fullwidth ) echo ' fullwidth'; ?>">
 	<div id="left-area">
-		<?php esa_item_map(); ?>
 	
-	    <!--  <h1 class="page_title">STORIES</h1> -->
-		<article id="post-<?php the_ID(); ?>" <?php post_class('entry clearfix'); ?>>
-			
+		<?php if (get_query_var('paged', 1) <= 1) {
+			esa_item_map(); 
+		} else { ?>
+			<h1 class="page_title">STORIES</h1>
+		<?php } ?>
 
+		<article id="post-<?php the_ID(); ?>" <?php post_class('entry clearfix'); ?>>
 			<?php
 				// the story page itself may have a thumbnail---
 				$thumb = '';
@@ -42,9 +44,6 @@ $et_ptemplate_blog_perpage = 5;
 			
 			<div class="post-content">
 			
-
-					
-
 			
 				<?php the_content(); ?>
 				

@@ -68,13 +68,19 @@ function esa_get_story_keywords() {
 	global $post;
 	$terms = wp_get_object_terms($post->ID, 'story_keyword');
 	$links = array();
-	$url = get_site_url();
-	foreach ( $terms as $term ) {
-		$links[] = "<a href='$url/?s=&post_type=story&term={$term->slug}&taxonomy=story_keyword&author=0'>{$term->name}</a>";
+	//$url = get_site_url();
+	foreach ($terms as $term) {
+		//$links[] = "<a href='$url/?s=&post_type=story&term={$term->slug}&taxonomy=story_keyword&author=0'>{$term->name}</a>";
+		$links[] = esa_link_form($term->name, array(
+			'post_type' 	=> 'story',
+			'term'			=> $term->slug,
+			'taxonomy'		=> 'story_keyword'
+		));
 	}
 	if (count($links)) {
-		return "Keywords: " . wp_sprintf('%l', $links);
+		return "Keywords: " .  implode(", ", $links);
 	}
+
 }
 
 /** the new filter thing */
@@ -232,13 +238,17 @@ function esa_search_string() {
 	// from classic single filter / link
 	if (isset($params['taxonomy']) and ($params['taxonomy']  == 'story_keyword')) {
 		$mode = 'keywords';
-		$search = isset($params['term']) ? $params['term'] : '';
+		if (isset($params['term'])) {
+			$termo = get_term_by('slug', $params['term'], 'story_keyword');
+			$search = $termo->name;
+		}
 	}
 
 	if (isset($params['author']) and isset($params['author'])) {
 		$mode = 'users';
 		$user = get_user_by('id', $params['author']);
 		$search = $user->user_nicename;
+		
 	}	
 		
 	
@@ -255,6 +265,65 @@ function esa_search_string() {
 	
 	return "$searchterm $filter";
 }
+
+/**
+ * to avoid ugly urls we ewant to build our own pagination; also use forms insetad of links... it's not the best solution,
+ * but because FSA is embedded in a larger WP context, we can not use the normal archives and stuff so easy (and not time is left).
+ */
+function esa_pagenavi() {
+
+	global $wp_query;
+	
+	$total_pages = max(1, absint($wp_query->max_num_pages));
+	$paged = max(1, absint($wp_query->get('paged')));
+	
+	if ($total_pages < 2) {
+		return;
+	}
+	
+	echo "<div class='wp-pagenavi'>";
+	echo "<span class='pages'>Page {$paged} of {$total_pages}</span>";
+	echo "<form method='post' action='", site_url(), "/' style='display:inline'>\n";
+	//echo "\t<input name='paged' value='$i' />\n";
+	foreach ($_POST as $k => $v) {
+		echo ($k != 'paged') ? "<input type='hidden' name='$k' value='$v' />\n" : '';
+	}
+	if ($total_pages < 5) {
+		$pageray = range(1, $total_pages);
+	} else {
+		$pageray = range(max($paged - 2, 1), min($paged + 2, $total_pages));
+		$caption = range(max($paged - 2, 1), min($paged + 2, $total_pages));
+		if (!in_array(1, $pageray)) {
+			array_unshift($pageray, 1);
+			array_unshift($caption, '&laquo;First');
+		}
+		if (!in_array($total_pages, $pageray)) {
+			array_push($pageray, $total_pages);
+			array_push($caption, 'Last&raquo;');
+		}
+	}
+
+	foreach ($pageray as $index => $pagenr) {
+		echo $pagenr == $paged ? "<span class='current'>$pagenr</span>\n" : "<button class='esa_page_link page larger' value='$pagenr' name='paged'>{$caption[$index]}</button>\n";
+	}
+	echo "</form></div>";
+}
+
+/**
+ * 
+ * @param string $caption
+ * @param assoc $query_vars
+ */
+function esa_link_form($caption, $query_vars) {
+	$url = site_url();
+	$echo = "<form method='post' action='$url/' class='esa_link_form'>";
+	foreach ($query_vars as $k => $v) {
+		$echo .= ($k != 'paged') ? "<input type='hidden' name='$k' value='$v' />" : '';
+	}
+	$echo .= "<input type='submit' value='$caption' />";
+	$echo .= "</form>";
+	return $echo;
+} 
 
 
 function wp_ajax_esa_autocomplete() {

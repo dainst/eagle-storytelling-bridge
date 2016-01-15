@@ -1,3 +1,44 @@
-MultiFilter fertig
+[Zeitplan]
 
-- chrome testen!!!
+Do	13.1	Bug Fix
+Fr	14.1	Bug Fix
+
+Mo	18.1	Testing
+Di	19.1
+Mi	20.1
+Do	21.1
+Fr	22.1
+
+Mo	25.1
+
+
+
+To Diskuss
+
+-- Francesco / Matteo --
+# wo einreichen?
+
+-- Francesco / (Wolfgang) --
+# Testphase am Monatag beginnen. Wer testet und gleich online oder zwei teilen und erstmal auf dem dev-Server?
+# ROMA! Flug buchen, Hotel buchen
+
+-- Wolfgang --
+- Chronontology
+
+-- Maurice --
+# Wie Urlaub für eine Woche nehmen?
+- Muss ich allen Urlaub meines jetzogen Vertrages vor Vertragsende nehmen?
+- Kann ich schon urlaub für den Sommer nehmen?
+
+-- Jorge / Esther --
+# Karel?
+
+[TODO]
+
+#-- urlaubsantrag
+#-- Reisekosten anstrag
+--- flug buchen
+--- hotel buchen
+--- anmelden
+
+-- Text weiter Atlanten; Crowd Sourcing Plattform; Belohnungen
