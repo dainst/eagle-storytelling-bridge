@@ -448,7 +448,7 @@ add_action('admin_menu', function() {
 		remove_menu_page('upload.php');
 	}
 });
-
+	
 //Manage Your Media Only
 add_action('pre_get_posts', function($query) {
 	
@@ -468,7 +468,7 @@ add_action('pre_get_posts', function($query) {
 		wp_send_json_error('not permitted'); // show nothing and do not allow upload
 	}	
 });
-
+	
 //  dashboard
 add_action('wp_dashboard_setup', function() {
 	// Globalize the metaboxes array, this holds all the widgets for wp-admin
@@ -483,8 +483,7 @@ add_action('wp_dashboard_setup', function() {
 });
 // only show own posts
 add_filter('pre_get_posts',	function ($query) {
-
-	if(!current_user_can('esa_manage_full_library')) {
+	if(!current_user_can('esa_manage_full_library') and is_admin()) {
 		global $user_ID;
 		$query->set('author',  $user_ID);
 	}
@@ -515,3 +514,11 @@ add_filter('gettext', function($translation, $text) {
 	}
 	return $translation;
 }, 10, 2);
+
+
+// fuckit
+add_action( 'admin_enqueue_scripts', 'my_admin_enqueue_scripts' );
+function my_admin_enqueue_scripts() {
+    if ( 'story' == get_post_type() )
+        wp_dequeue_script( 'autosave' );
+}

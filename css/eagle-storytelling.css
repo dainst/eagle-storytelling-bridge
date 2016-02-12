@@ -79,13 +79,16 @@ input[type="week"]
 .esa_pt_excerpt {
 	line-height: normal;
 }
+
+.et_pt_blogmeta {
+	padding-left: 36px;
+}
+
+
 .story-thumbnail-list {
 	margin-left: -36px;
 }
 
-.esa_nothumbnail {
-	margin-left: 36px;
-}
 
 .post-excerpt {
 	clear: both;
@@ -211,4 +214,37 @@ ul.ui-autocomplete:before {
 
 .esa_link_form input:hover {
 	text-decoration: underline
+}
+
+#TB_overlay {
+    z-index: 9998 !important;
+}
+
+.esa_login input {
+	padding: 2px;
+	margin: 0em 0px 0px 10px;
+}
+
+.esa_login input[type='submit'] {
+	background: none;
+	border: none;
+	color: #1473B3;
+	cursor: pointer
+}
+
+.esa_login input[type='submit']:hover {
+	text-decoration: underline;
+}
+
+.esa_login input[type='text'],
+.esa_login input[type='password'] {
+	height: 24px;
+	width: 199px;
+	background-color: #FFF;
+	color: #4E4E4E;
+	border: 1px solid #BBB;
+	box-sizing: content-box;
+	display: inline-block;
+	margin: 0.5em 0px 0px 10px;
+	padding: 2px;
 }

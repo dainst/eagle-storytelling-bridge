@@ -103,12 +103,27 @@
 					<li><a href="<?php echo site_url(); ?>/wp-admin/post-new.php?post_type=story">Create new story</a></li>
 					<li><a href="<?php echo site_url(); ?>/wp-admin/edit.php?post_type=story">Edit existing stories</a></li>
 					<li></li>
-					<li><a href="<?php echo wp_logout_url() ?>">Logout</a></li>
+					<li><a href="<?php echo wp_logout_url("http://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}") ?>">Logout</a></li>
 				</ul>
+				
 			<?php } else { ?>
+			
 				<h4 class='widgettitle'>Not logged in</h4>
+				<script src='<?php echo plugins_url(); ?>/eagle-search/js/search.js?ver=4.4.2'></script>
+				<script src='https://www.google.com/recaptcha/api.js'></script>
+				    
+				</form>
 				<ul>
-					<li><a href="<?php echo wp_login_url(site_url('/stories/')); ?>" title="Login">Log in (or create an account)</a> to create a story.</li>
+					<li><a href='javascript:;' onclick="Search.registerShow();" title="Register">Register</a> to create or edit stories</li>
+					<li>or <a href='javascript:;' onclick="jQuery('#esa_login_form').toggle();" title="Login">log in </a> if you allready have an account).</li>
+						<form style='display:none' id='esa_login_form' action="<?php echo site_url(); ?>/wp-login.php" method="post" class='esa_login'>
+							<input placeholder='Username' name="log" id="lwa_user_login" value="" type="text"><br>
+							<input placeholder='Password' name="pwd" id="lwa_user_pass" type="password"><br>
+							<input name="redirect_to" value="<?php echo "http://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"; ?>" type="hidden">
+							<div><label for="rememberme"><input name="rememberme" id="rememberme" checked="checked" value="forever" type="checkbox"> Remember me</label></div>
+						    <input name="submit" value="Login" class="button" type="submit">
+						</form>
+					
 				</ul>
 			<?php }	?>
 		</div>
