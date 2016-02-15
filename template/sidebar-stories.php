@@ -127,6 +127,7 @@
 				</ul>
 			<?php }	?>
 		</div>
-		 		 
+		
+
 	</div> <!-- end #sidebar -->
 <?php } ?>

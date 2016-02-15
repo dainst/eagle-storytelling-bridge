@@ -272,11 +272,12 @@ add_filter('404_template', 'esa_get_search_stories_page_template');
  */ 
 
 add_filter('pre_get_posts', function($query) {
+
 	if (!$query->is_search or !isset($query->query['post_type']) or !is_esa($query->query['post_type'])) {
 		return $query;
 	}
-	// 1337-haxxorz do it so!
-	//$_POST = $_GET;
+	
+	//$_POST = array_merge($_GET, $_POST);
 	//echo "<textarea style='width:100%; height: 250px'> ", print_r($_POST, 1), "</textarea>";
 	//echo "<textarea style='width:100%; height: 250px'> ", print_r($query, 1), "</textarea>";
 
@@ -286,10 +287,11 @@ add_filter('pre_get_posts', function($query) {
 
 
 	$query->set('esa_multifilter', $search);
-	
+
 	if (!mode or (!$itemid and !$search)) {
 		return $query;
 	}
+	
 	
 	if ($mode == 'users') {
 		if ($itemid) {

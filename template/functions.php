@@ -268,7 +268,7 @@ function esa_search_string() {
 
 /**
  * to avoid ugly urls we ewant to build our own pagination; also use forms insetad of links... it's not the best solution,
- * but because FSA is embedded in a larger WP context, we can not use the normal archives and stuff so easy (and not time is left).
+ * but because FSA is embedded in a larger WP context, we can not use the normal archives and stuff so easy (and no time is left also).
  */
 function esa_pagenavi() {
 
@@ -289,6 +289,7 @@ function esa_pagenavi() {
 		echo ($k != 'paged') ? "<input type='hidden' name='$k' value='$v' />\n" : '';
 	}
 	if ($total_pages < 5) {
+		$caption = range(1, $total_pages);
 		$pageray = range(1, $total_pages);
 	} else {
 		$pageray = range(max($paged - 2, 1), min($paged + 2, $total_pages));
@@ -360,4 +361,9 @@ function wp_ajax_esa_autocomplete() {
 };
 add_action('wp_ajax_esa_autocomplete', 'wp_ajax_esa_autocomplete');
 add_action('wp_ajax_nopriv_esa_autocomplete', 'wp_ajax_esa_autocomplete');
+
+
+
+
+
 ?>
