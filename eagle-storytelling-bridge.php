@@ -235,7 +235,12 @@ function esa_get_story_post_type_template($single_template) {
 	global $post;
 
 	if (is_esa($post->post_type)) {
-		$single_template = dirname( __FILE__ ) . '/template/single-story.php';
+		if (($_GET['stories_api'] != '') or ($_POST['stories_api'] != '')) {
+			include('inc/languages.php');
+			$single_template = dirname( __FILE__ ) . '/template/API.php';
+		} else {
+			$single_template = dirname( __FILE__ ) . '/template/single-story.php';
+		}
 	}
 	return $single_template;
 }
@@ -253,11 +258,29 @@ function esa_get_stories_page_template($page_template) {
 
 add_filter( 'page_template', 'esa_get_stories_page_template' );
 
+/* api */
+add_filter('query_vars', 'add_stories_api');
+function add_stories_api($public_query_vars) {
+	$public_query_vars[] = 'stories_api';
+	return $public_query_vars;
+}
+
+add_action('pre_get_posts', 'esa_api_query');
+function esa_api_query($query) {
+	if ($query->get('stories_api')) {
+		$query->set('post_type', 'story');
+	}
+}
 
 /* register template for page "search stories" */
 function esa_get_search_stories_page_template($page_template) {
-	if (is_esa(get_query_var('post_type')) or (get_query_var('taxonomy') == 'story_keyword')){
-		$page_template = dirname( __FILE__ ) . '/template/search-stories.php';
+	if (is_esa(get_query_var('post_type')) or (get_query_var('taxonomy') == 'story_keyword') or (get_query_var('stories_api') != '')){
+		if (get_query_var('stories_api')) {
+			include('inc/languages.php');
+			$page_template = dirname( __FILE__ ) . '/template/API.php';
+		}  else {
+			$page_template = dirname( __FILE__ ) . '/template/search-stories.php';
+		}
 	}
 	return $page_template;
 }
@@ -272,7 +295,6 @@ add_filter('404_template', 'esa_get_search_stories_page_template');
  */ 
 
 add_filter('pre_get_posts', function($query) {
-
 	if (!$query->is_search or !isset($query->query['post_type']) or !is_esa($query->query['post_type'])) {
 		return $query;
 	}
@@ -290,8 +312,7 @@ add_filter('pre_get_posts', function($query) {
 
 	if (!mode or (!$itemid and !$search)) {
 		return $query;
-	}
-	
+	}	
 	
 	if ($mode == 'users') {
 		if ($itemid) {
